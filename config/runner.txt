@@ -1,0 +1,34 @@
+
+cd /CTRLFW/SAIL/PSAIL_SIT/extfmewk/
+<WF_DELETE>
+
+<WF_CREATE>
+
+<WF_DEPLOY>
+
+<MR_CHANGE>
+
+
+hive -S -e "INSERT INTO TABLE sit_aml_tmd.sit_sail_ola_lookup(country_name, source_name, dst_applicability, ola_local_country, ola_edt_hkt, ola_est_hkt, edt_month_range)
+VALUES('<CTRY_U>','<SRC_U>','N','T+1,21:00', 'T+1,20:00','T+1,20:00',null);"
+
+
+${AML_SAIL_BASE}/common/appl/scripts/sail_recon_watcher.sh <SRC_L>sit <SRC_L> <CTRY_L> 20181130
+
+${AML_SAIL_BASE}/EBBS/appl/scripts/aml_global_wf_wrapper.sh <SRC_L>SIT <CTRY_L> 20181130 <SRC_L> SIT
+
+${AML_SAIL_BASE}/EBBS/appl/scripts/aml_global_hdfs2nas.sh <SRC_L>SIT <CTRY_L> 20181130 <SRC_L> SIT
+
+${AML_SAIL_BASE}/EBBS/appl/scripts/aml_sftp_edm2mantas.sh <SRC_L> SIT <CTRY_L> 20181130 /aml/batch/download/<CTRY_U>/<SRC_U>
+
+${AML_SAIL_BASE}/common/appl/scripts/aml_e2e_generic_recon.sh <CTRY_L> "'<SRC_L>'" 20181130
+
+==========
+
+cd /CTRLFW/SAIL/PSAIL_SIT/EBBS/appl/scripts
+sh aml_global_adhoc_wf_wrapper.sh <SRC_U>SIT <CTRY_U> <SRC_U> SIT 20181101 20181130 20181101 20181130
+sh aml_global_hdfs2nas_adhoc.sh <SRC_L>sit in 20181130 <SRC_L> sit
+
+
+
+
